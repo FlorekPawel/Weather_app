@@ -227,10 +227,8 @@ public class AcuWeatherApi {
     }
 }
 //TODO:
-// Przetestowanie działania tego API bo mi się już nie chciało
 // GUI z mozliwoscią wyborów jakie chcemy mieć dane, można ograniczać je czasowo, ja pobieram maxymalne jakie mamy dostepne
-// cleaning - zostawienie tylko potrzebnych nam informacji z listy powstałej po Execute
-// optymalizacja kodu i połączenie tego w całość
-// +przypominam, ze jak chcemy dużo razy odpalać kod to można write i read do/z pliku zrobić, nie na projekt, ale dla nas
+// cleaning - zostawienie tylko potrzebnych nam informacji z listy powstałej po Execute - pytanie czy nie wydłuzy to czasu
+// połączenie tego w całość
 // dokumentacja
 // komentarze do kodu
