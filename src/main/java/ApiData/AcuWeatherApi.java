@@ -12,7 +12,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,8 @@ import java.util.Map;
 // dla testow mozna pozapisywac dane jako pliki .json, lub nawet .txt, zeby nie marnować odpaleń
 public class AcuWeatherApi {
     //private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
-    //private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
-    private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
+    private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
+    //private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
     private Gson gson = new Gson();
     private String getLocationKey(String location) {
         // pobranie klucza lokacji z nazwy miejscowosci
@@ -203,8 +205,25 @@ public class AcuWeatherApi {
                 e.printStackTrace();
             }
         }
-
+        saveExecuted(executed);
         return executed;
+    }
+    public void saveExecuted(List<List<Map<String,Object>>> executed){
+        try (PrintWriter writer = new PrintWriter("executed.txt")) {
+            writer.println("[");
+            for (List<Map<String, Object>> sublist : executed) {
+                writer.println("[");
+                for (Map<String, Object> dictionary : sublist) {
+                    writer.println(dictionary);
+                }
+                writer.println("],");
+                writer.println();
+            }
+            writer.println("]");
+            System.out.println("Zapisano do pliku.");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
 //TODO:
