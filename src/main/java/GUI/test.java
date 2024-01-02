@@ -12,7 +12,7 @@ public class test {
         AcuWeatherApi acu = new AcuWeatherApi();
         CleaningData cleaningData = new CleaningData();
         List<List<Map<String,Object>>> downloaded_data = acu.Executor("Warsaw");
-        List<List<Map<String,Object>>> cleaned_data = cleaningData.CleaningExecutor(downloaded_data);
+        //List<List<Map<String,Object>>> cleaned_data = cleaningData.CleaningExecutor(downloaded_data);
 
     }
 }
