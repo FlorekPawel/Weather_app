@@ -23,10 +23,11 @@ import java.util.Map;
 // Warning: mamy max 50 wykorzystań 1 klucza dziennie, wię mając 150 wykorzystań, uważajmy
 // dla testow mozna pozapisywac dane jako pliki .json, lub nawet .txt, zeby nie marnować odpaleń
 public class AcuWeatherApi {
-    //private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
-    private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
-    //private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
+    // private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
+    //private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
+    private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
     private Gson gson = new Gson();
+
     private String getLocationKey(String location) {
         // pobranie klucza lokacji z nazwy miejscowosci
 
@@ -100,10 +101,11 @@ public class AcuWeatherApi {
         // rozne typy aktywnosci outdorowych i ocena czy dobra pogoda na to czy zła
         // 1 element listy to jakas pojedyncza aktywnosc w danym dniu, w srodku slowniki
         try {
-            String apiUrl = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + location_key + "?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/indices/v1/daily/5day/"+location_key+"?apikey=" + apiKey;
             String jsonResponse = sendHttpGetRequest(apiUrl);
-            JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
-            JsonArray forecastsArray = jsonObject.getAsJsonArray("DailyForecasts");
+            //JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+           // JsonArray forecastsArray = jsonObject.getAsJsonArray("DailyForecasts");
+            JsonArray forecastsArray = gson.fromJson(jsonResponse, JsonArray.class);
 
             List<Map<String, Object>> forecastsList = new ArrayList<>();
 
@@ -156,6 +158,7 @@ public class AcuWeatherApi {
         String location_key = getLocationKey(location);
 
         List<Thread> threads = new ArrayList<>();
+
         Thread hourlyThread = new Thread(() -> {
             List<Map<String, Object>> hourlyData = getHourlyForecast(location_key);
             synchronized (executed) {
