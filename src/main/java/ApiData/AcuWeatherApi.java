@@ -19,13 +19,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 // Warning: mamy max 50 wykorzystań 1 klucza dziennie, wię mając 150 wykorzystań, uważajmy
 // dla testow mozna pozapisywac dane jako pliki .json, lub nawet .txt, zeby nie marnować odpaleń
 public class AcuWeatherApi {
-    // private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
-    //private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
-    private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
+     private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
+//    private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
+//    private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
     private Gson gson = new Gson();
 
     private String getLocationKey(String location) {
@@ -47,12 +48,12 @@ public class AcuWeatherApi {
     }
 
 
-    private List<Map<String, Object>> getDailyForecasts(String location_key){ // max 5 days
+    private List<Map<String, Object>> getDailyForecasts(String location_key, boolean isMetric){ // max 5 days
         // Dostajemy pobrane dane z naszego url i przerabiamy je na Liste ze słownikami, kazdy element listy odpowiada
         // innemu dniu, w mapie dane jak na accu
 
         try {
-            String apiUrl = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + location_key + "?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + location_key + "?apikey=" + apiKey + "&metric=" + isMetric;
             String jsonResponse = sendHttpGetRequest(apiUrl);
             JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
             JsonArray dailyForecastsArray = jsonObject.getAsJsonArray("DailyForecasts");
@@ -71,10 +72,10 @@ public class AcuWeatherApi {
         }
         return null;
     }
-    private List<Map<String, Object>> getHistory(String location_key){ // max 24h
+    private List<Map<String, Object>> getHistory(String location_key, boolean isMetric){ // max 24h
         // tak samo ale 24 komorki, pogoda 24h wstecz jaka była
         try {
-            String apiUrl = "http://dataservice.accuweather.com/currentconditions/v1/" + location_key + "/historical/24?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/currentconditions/v1/" + location_key + "/historical/24?apikey=" + apiKey + "&metric=" + isMetric;
             String jsonResponse = sendHttpGetRequest(apiUrl);
             Type listType = new TypeToken<ArrayList<Map<String, Object>>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
@@ -83,10 +84,10 @@ public class AcuWeatherApi {
         }
         return null;
     }
-    private List<Map<String, Object>> getHourlyForecast(String location_key){ // max 12h
+    private List<Map<String, Object>> getHourlyForecast(String location_key, boolean isMetric){ // max 12h
         // godzinowa, miejsce na liscie - rozne godziny
         try {
-            String apiUrl = "http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location_key + "?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location_key + "?apikey=" + apiKey + "&metric=" + isMetric;
             String jsonResponse = sendHttpGetRequest(apiUrl);
             Type listType = new TypeToken<ArrayList<Map<String, Object>>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
@@ -97,11 +98,11 @@ public class AcuWeatherApi {
     }
 
 
-    private List<Map<String, Object>> getIndices(String location_key){ // zajebiste pogody dla joggingu itd
+    private List<Map<String, Object>> getIndices(String location_key, boolean isMetric){ // zajebiste pogody dla joggingu itd
         // rozne typy aktywnosci outdorowych i ocena czy dobra pogoda na to czy zła
         // 1 element listy to jakas pojedyncza aktywnosc w danym dniu, w srodku slowniki
         try {
-            String apiUrl = "http://dataservice.accuweather.com/indices/v1/daily/5day/"+location_key+"?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/indices/v1/daily/5day/"+location_key+"?apikey=" + apiKey + "&metric=" + isMetric;
             String jsonResponse = sendHttpGetRequest(apiUrl);
             //JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
            // JsonArray forecastsArray = jsonObject.getAsJsonArray("DailyForecasts");
@@ -122,10 +123,10 @@ public class AcuWeatherApi {
         }
         return null;
     }
-    private List<Map<String, Object>> getCurrent(String location_key){ //current weather
+    private List<Map<String, Object>> getCurrent(String location_key, boolean isMetric){ //current weather
         // sam slownik, obecna pogoda tylko
         try {
-            String apiUrl = "http://dataservice.accuweather.com/currentconditions/v1/" + location_key + "?apikey=" + apiKey;
+            String apiUrl = "http://dataservice.accuweather.com/currentconditions/v1/" + location_key + "?apikey=" + apiKey + "&metric=" + isMetric;
             String jsonResponse = sendHttpGetRequest(apiUrl);
 
             Type listType = new TypeToken<ArrayList<Map<String, Object>>>() {}.getType();
@@ -149,9 +150,9 @@ public class AcuWeatherApi {
             throw new IOException("Failed to fetch data. HTTP status code: " + statusCode);
         }
     }
-    public List<List<Map<String,Object>>> Executor(String location){
+    public List<List<Map<String,Object>>> Executor(String location, String unit){
         // Executor, pobiera lokalizacje i List<> z wyborami jakie komendy chcemy odpalic
-
+        boolean isMetric = (Objects.equals(unit, "metric"));
         // zwraca liste z utworzonymi obiektami (max size 5)
         List<List<Map<String,Object>>> executed = new ArrayList<>();
 
@@ -159,56 +160,44 @@ public class AcuWeatherApi {
 
         List<Thread> threads = new ArrayList<>();
 
-        Thread hourlyThread = new Thread(() -> {
-            List<Map<String, Object>> hourlyData = getHourlyForecast(location_key);
-            synchronized (executed) {
-                executed.add(hourlyData);
-            }
-        });
-        threads.add(hourlyThread);
-
         Thread currentConditionThread = new Thread(() -> {
-            List<Map<String, Object>> currentCondition = getCurrent(location_key);
-            synchronized (executed) {
-                executed.add(currentCondition);
-            }
+            List<Map<String, Object>> currentCondition = getCurrent(location_key, isMetric);
+            executed.add(currentCondition);
         });
         threads.add(currentConditionThread);
 
-        Thread past24hThread = new Thread(() -> {
-            List<Map<String, Object>> past24h = getHistory(location_key);
-            synchronized (executed) {
-                executed.add(past24h);
-            }
+        Thread hourlyThread = new Thread(() -> {
+            List<Map<String, Object>> hourlyData = getHourlyForecast(location_key, isMetric);
+            executed.add(hourlyData);
         });
-        threads.add(past24hThread);
+        threads.add(hourlyThread);
 
         Thread dailyThread = new Thread(() -> {
-            List<Map<String, Object>> daily = getDailyForecasts(location_key);
-            synchronized (executed) {
-                executed.add(daily);
-            }
+            List<Map<String, Object>> daily = getDailyForecasts(location_key, isMetric);
+            executed.add(daily);
         });
         threads.add(dailyThread);
 
+        Thread past24hThread = new Thread(() -> {
+            List<Map<String, Object>> past24h = getHistory(location_key, isMetric);
+            executed.add(past24h);
+        });
+        threads.add(past24hThread);
+
         Thread indicesThread = new Thread(() -> {
-            List<Map<String, Object>> indices = getIndices(location_key);
-            synchronized (executed) {
-                executed.add(indices);
-            }
+            List<Map<String, Object>> indices = getIndices(location_key, isMetric);
+            executed.add(indices);
         });
         threads.add(indicesThread);
-        for (Thread thread : threads) {
-            thread.start();
-        }
-        for (Thread thread : threads) {
+
+          for (Thread thread : threads) {
             try {
+                thread.start();
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        saveExecuted(executed);
         return executed;
     }
     public void saveExecuted(List<List<Map<String,Object>>> executed){
