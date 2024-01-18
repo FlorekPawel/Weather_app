@@ -110,10 +110,11 @@ public class WeatherGUI extends javax.swing.JFrame {
         dailyWeather3 = new javax.swing.JLabel();
         dailyWeather4 = new javax.swing.JLabel();
         dailyWeather5 = new javax.swing.JLabel();
-        panelHourly = new JFXPanel();
+        panelPast24 = new JFXPanel();
         SubmitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(900, 600));
 
         LocationEntrance.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         LocationEntrance.setText("Enter Location");
@@ -159,8 +160,8 @@ public class WeatherGUI extends javax.swing.JFrame {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(tempLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(weatherLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                .addGap(53, 53, 53))
+                .addComponent(weatherLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,7 +205,7 @@ public class WeatherGUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(hourlyWeather3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(hourlyWeather6, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                    .addComponent(hourlyWeather6, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                     .addComponent(hourlyWeather5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -228,7 +229,7 @@ public class WeatherGUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(hourlyWeather11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(hourlyWeather7, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                    .addComponent(hourlyWeather7, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                     .addComponent(hourlyWeather8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(hourlyWeather12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -344,7 +345,7 @@ public class WeatherGUI extends javax.swing.JFrame {
                     .addComponent(dailyWeather3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(dailyWeather4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(dailyWeather5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,19 +388,18 @@ public class WeatherGUI extends javax.swing.JFrame {
 
         currentTab.addTab("Daily", jPanel3);
 
-        javax.swing.GroupLayout panelHourlyLayout = new javax.swing.GroupLayout(panelHourly);
-        panelHourly.setLayout(panelHourlyLayout);
+        javax.swing.GroupLayout panelHourlyLayout = new javax.swing.GroupLayout(panelPast24);
+        panelPast24.setLayout(panelHourlyLayout);
         panelHourlyLayout.setHorizontalGroup(
             panelHourlyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 734, Short.MAX_VALUE)
+            .addGap(0, 857, Short.MAX_VALUE)
         );
         panelHourlyLayout.setVerticalGroup(
             panelHourlyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 438, Short.MAX_VALUE)
         );
 
-        currentTab.addTab("Hourly", panelHourly);
-
+        currentTab.addTab("Past 24h", panelPast24);
 
         SubmitButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         SubmitButton.setText("Submit");
@@ -640,13 +640,14 @@ public class WeatherGUI extends javax.swing.JFrame {
         }
     }
     private void setLast24(List<Map<String, Object>> last24Data){
+
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Data");
-        yAxis.setLabel("Temperatura w °C");
+        xAxis.setLabel("Date");
+        yAxis.setLabel("Temperature in °" + ((Map)(((Map)(last24Data.get(0).get("Temperature"))).get(unit))).get("Unit").toString());
 
         LineChart lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("JavaFX Line Chart");
+        lineChart.setTitle("Temperature");
 
         XYChart.Series series = new XYChart.Series();
 
@@ -660,7 +661,7 @@ public class WeatherGUI extends javax.swing.JFrame {
         lineChart.getData().add(series);
 
         Scene scene = new Scene(lineChart);
-        panelHourly.setScene(scene);
+        panelPast24.setScene(scene);
 
     }
 
@@ -726,7 +727,7 @@ public class WeatherGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private JFXPanel panelHourly;
+    private JFXPanel panelPast24;
     private javax.swing.JLabel tempLabel;
     private javax.swing.JComboBox<String> unitComboBox;
     private javax.swing.JLabel weatherLabel;
