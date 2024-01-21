@@ -12,6 +12,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -112,6 +114,9 @@ public class WeatherGUI extends javax.swing.JFrame {
         dailyWeather5 = new javax.swing.JLabel();
         panelHourly = new JFXPanel();
         SubmitButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        indeciesText = new javax.swing.JLabel();
+
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -400,6 +405,16 @@ public class WeatherGUI extends javax.swing.JFrame {
 
         currentTab.addTab("Hourly", panelHourly);
 
+        jPanel4.setLayout(new FlowLayout(FlowLayout.LEFT)); // Ustawienia FlowLayout i wyrównanie do lewej strony
+
+        JScrollPane scrollPane = new JScrollPane(indeciesText);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jPanel4.add(scrollPane);
+
+        currentTab.addTab("Indecies", jPanel4);
+
+        currentTab.addTab("Indecies", jPanel4);
+
 
         SubmitButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         SubmitButton.setText("Submit");
@@ -463,6 +478,9 @@ public class WeatherGUI extends javax.swing.JFrame {
 
         List<Map<String,Object>> last24Data = this.downloaded_data.get(3);
         setLast24(last24Data);
+
+        List<Map<String,Object>> indeciesData = this.downloaded_data.get(4);
+        setIndecies(indeciesData);
         
         
         if (SaveRadioButton.isSelected()) {
@@ -512,7 +530,12 @@ public class WeatherGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WeatherGUI().setVisible(true);
+                WeatherGUI weatherGUI = new WeatherGUI();
+                java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+                java.awt.Dimension frameSize = weatherGUI.getSize();
+                weatherGUI.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+                weatherGUI.setSize(screenSize);
+                weatherGUI.setVisible(true);
             }
         });
     }
@@ -524,6 +547,15 @@ public class WeatherGUI extends javax.swing.JFrame {
         
         String currWeather = currentData.get("WeatherText").toString();
         weatherLabel.setText(currWeather);
+        double icon = (double) currentData.get("WeatherIcon");
+        int iconInt = (int) icon;
+        String iconString;
+        if (iconInt < 10) iconString = "0" + Integer.toString(iconInt) + "-s.png";
+        else iconString = Integer.toString(iconInt) + "-s.png";
+        ImageIcon originalIcon = new ImageIcon("src/main/java/ApiData/grafiki pogody/" + iconString);
+        Image originalImage = originalIcon.getImage();
+        Image scaledImage = originalImage.getScaledInstance(125, 125, Image.SCALE_SMOOTH); // Zmiana rozmiaru na 50x50
+        weatherLabel.setIcon(new ImageIcon(scaledImage));
     }
     private void setHourly(List<Map<String, Object>> hourlyData) {
         List<javax.swing.JLabel> hourLabs = new ArrayList<>();
@@ -587,6 +619,12 @@ public class WeatherGUI extends javax.swing.JFrame {
         i = 0;
         for (javax.swing.JLabel lab: hourWeather) {
             lab.setText(hourlyData.get(i).get("IconPhrase").toString());
+            double icon = (double) hourlyData.get(i).get("WeatherIcon");
+            int iconInt = (int) icon;
+            String iconString;
+            if (iconInt < 10) iconString = "0" + Integer.toString(iconInt) + "-s.png";
+            else iconString = Integer.toString(iconInt) + "-s.png";
+            lab.setIcon(new ImageIcon("src/main/java/ApiData/grafiki pogody/"+iconString));
             i++;
         }
     }
@@ -636,6 +674,12 @@ public class WeatherGUI extends javax.swing.JFrame {
         i = 0;
         for (javax.swing.JLabel lab: dailyWeathers) {
             lab.setText(((Map)(dailyData.get(i).get("Day"))).get("IconPhrase").toString());
+            double icon = (double) ((Map)(dailyData.get(i).get("Day"))).get("Icon");
+            int iconInt = (int) icon;
+            String iconString;
+            if (iconInt < 10) iconString = "0" + Integer.toString(iconInt) + "-s.png";
+            else iconString = Integer.toString(iconInt) + "-s.png";
+            lab.setIcon(new ImageIcon("src/main/java/ApiData/grafiki pogody/"+iconString));
             i++;
         }
     }
@@ -661,6 +705,22 @@ public class WeatherGUI extends javax.swing.JFrame {
 
         Scene scene = new Scene(lineChart);
         panelHourly.setScene(scene);
+
+    }
+
+    private void setIndecies(List<Map<String,Object>> indeciesData) {
+        StringBuilder text = new StringBuilder("<html>");
+        int n = indeciesData.size();
+        for (int i = 0; i < n; i++) {
+            text.append(indeciesData.get(i).get("Name").toString()).append(": ")
+                    .append(indeciesData.get(i).get("Category").toString()).append("<br>");
+        }
+        text.append("</html>");
+
+        indeciesText.setPreferredSize(new Dimension(700,700));
+        indeciesText.setText(text.toString());
+
+        indeciesText.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 
     }
 
@@ -726,9 +786,11 @@ public class WeatherGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private JFXPanel panelHourly;
     private javax.swing.JLabel tempLabel;
     private javax.swing.JComboBox<String> unitComboBox;
     private javax.swing.JLabel weatherLabel;
+    private javax.swing.JLabel indeciesText;
     // End of variables declaration//GEN-END:variables
 }

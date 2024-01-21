@@ -24,9 +24,12 @@ import java.util.Objects;
 // Warning: mamy max 50 wykorzystań 1 klucza dziennie, wię mając 150 wykorzystań, uważajmy
 // dla testow mozna pozapisywac dane jako pliki .json, lub nawet .txt, zeby nie marnować odpaleń
 public class AcuWeatherApi {
-     private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
+//     private static final String apiKey = "KpFoV3MGxJ0yX8PZkMgYHZe89j4pkD4n"; // kiddo key
 //    private static final String apiKey = "AGwmg1rTWzUvFPmRt4ZHPAUM0xZDw9QM"; // florini key
 //    private static final String apiKey = "GnVrkjfrIyp0aAtmUR6qJiseCY7Fzhyp"; // mata key
+//    private static final String apiKey = "j0Uk3VetIpAnxq5F9GVyO4tkMhDLM7uw";
+private static final String apiKey = "nfrn9irmm7AD7vHy3D38pGomXJf3gpWw";
+
     private Gson gson = new Gson();
 
     private String getLocationKey(String location) {
