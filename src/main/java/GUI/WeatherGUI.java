@@ -403,7 +403,7 @@ public class WeatherGUI extends javax.swing.JFrame {
             .addGap(0, 438, Short.MAX_VALUE)
         );
 
-        currentTab.addTab("Hourly", panelHourly);
+        currentTab.addTab("Last24h", panelHourly);
 
         jPanel4.setLayout(new FlowLayout(FlowLayout.LEFT)); // Ustawienia FlowLayout i wyrównanie do lewej strony
 
@@ -686,11 +686,11 @@ public class WeatherGUI extends javax.swing.JFrame {
     private void setLast24(List<Map<String, Object>> last24Data){
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Data");
-        yAxis.setLabel("Temperatura w °C");
+        xAxis.setLabel("Date");
+        yAxis.setLabel("Temperature in °" + ((Map)(((Map)(last24Data.get(0).get("Temperature"))).get(unit))).get("Unit").toString());
 
         LineChart lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("JavaFX Line Chart");
+        lineChart.setTitle("Temperature");
 
         XYChart.Series series = new XYChart.Series();
 
